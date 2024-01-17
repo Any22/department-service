@@ -1,5 +1,7 @@
 package com.example.departmentservice.departmentController;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,6 @@ import lombok.AllArgsConstructor;
  *
  ********************************************************************************************************************************************/
 @RestController
-@RequestMapping("api/departments")
 @AllArgsConstructor
 public class DepartmentController {
 	@Autowired 
@@ -32,7 +33,7 @@ public class DepartmentController {
 	
 	private static final Log LOGGER=LogFactory.getLog(DepartmentController.class) ;
 	
-	@PostMapping
+	@PostMapping(value="/departments")
 	public ResponseEntity<Department> saveDepartment (@RequestBody Department department){
 		Department savedDepartment = departmentService.saveDepartment(department);
 		
@@ -40,8 +41,18 @@ public class DepartmentController {
 		
 	}
 	
+	@GetMapping(value="/departments")
+	public ResponseEntity<List<DepartmentDTO>> getAllDepartments (){
+		
+	List<DepartmentDTO> departmentDTOs = departmentService.getAllDepartments();
+		
+		
+		return new ResponseEntity<>(departmentDTOs, HttpStatus.OK);
+		
+	}
+	
 ///i was getting error not found and the reason behind that I forgot to put currly braces for deptId
-	@GetMapping("{deptId}")
+	@GetMapping("/departments/{deptId}")
 	public ResponseEntity<DepartmentDTO> getDepartmentById (@PathVariable Long deptId) throws Exception {
 		 LOGGER.info("department id "+ deptId);
 	        DepartmentDTO departmentDto = departmentService.getDepartmentById(deptId);

@@ -1,5 +1,7 @@
 package com.example.departmentservice.departmentService;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.departmentservice.dto.DepartmentDTO;
@@ -9,6 +11,7 @@ public interface DepartmentService {
 	
 	Department saveDepartment (Department department);
 	DepartmentDTO getDepartmentById (Long departmentId);
+	List<DepartmentDTO> getAllDepartments();// to be implemnted after coming back 
 	
 
 }
