@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.departmentservice.departmentService.DepartmentService;
@@ -18,42 +19,57 @@ import com.example.departmentservice.dto.DepartmentDTO;
 import com.example.departmentservice.entity.Department;
 
 import lombok.AllArgsConstructor;
-/*********************************************************************************************************************************************
- * this microservice is a cient for config server 
+import lombok.extern.slf4j.Slf4j;
+
+ /*************************************************************************************************************************************
+ * This microservice is a client for config server 
  * we have added the config Client starter dependency in pom.xml 
  *
  *
- ********************************************************************************************************************************************/
+ **************************************************************************************************************************************/
 @RestController
-@AllArgsConstructor
+@Slf4j
+@RequestMapping("api/v1/departments")
 public class DepartmentController {
+	
 	@Autowired 
 	private DepartmentService departmentService;
 	
-	private static final Log LOGGER=LogFactory.getLog(DepartmentController.class) ;
-	
-	@PostMapping(value="/departments")
-	public ResponseEntity<Department> saveDepartment (@RequestBody Department department){
-		Department savedDepartment = departmentService.saveDepartment(department);
+/**************************************************************************************************************************************
+ * Adds a new department related data
+ * @param department
+ * @return ReponseEntity of type Department with HttpStatus "created"
+ *************************************************************************************************************************************/
+	@PostMapping(value="/add")
+	public ResponseEntity<?> addDepartment (@RequestBody DepartmentDTO departmentDTO){
 		
-		return new ResponseEntity<>(savedDepartment, HttpStatus.CREATED);
+		log.info("The department data to be added {}", departmentDTO);
+		departmentService.saveDepartment(departmentDTO);
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
 		
 	}
 	
-	@GetMapping(value="/departments")
+/**************************************************************************************************************************************
+ * Gets all departments and extended data 
+ * @param department
+ * @return ReponseEntity of type Department with HttpStatus "created"
+***************************************************************************************************************************************/
+	@GetMapping(value="/get")
 	public ResponseEntity<List<DepartmentDTO>> getAllDepartments (){
 		
-	List<DepartmentDTO> departmentDTOs = departmentService.getAllDepartments();
-		
+		List<DepartmentDTO> departmentDTOs = departmentService.getAllDepartments();
+		log.info("The List of all departments {}", departmentDTOs);
 		
 		return new ResponseEntity<>(departmentDTOs, HttpStatus.OK);
 		
 	}
 	
-///i was getting error not found and the reason behind that I forgot to put currly braces for deptId
-	@GetMapping("/departments/{deptId}")
+    ///I was getting error "not found" and the cause was I forgot to put currly braces for deptId
+	@GetMapping("/get/{deptId}")
 	public ResponseEntity<DepartmentDTO> getDepartmentById (@PathVariable Long deptId) throws Exception {
-		 LOGGER.info("department id "+ deptId);
+		
+		 log.info("department id "+ deptId);
 	        DepartmentDTO departmentDto = departmentService.getDepartmentById(deptId);
 	        
 	        if (departmentDto != null) {
