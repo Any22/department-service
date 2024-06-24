@@ -9,7 +9,7 @@ import com.example.departmentservice.entity.Department;
 @Service
 public interface DepartmentService {
 	
-	Department saveDepartment (Department department);
+	void saveDepartment (DepartmentDTO departmentDTO);
 	DepartmentDTO getDepartmentById (Long departmentId);
 	List<DepartmentDTO> getAllDepartments();// to be implemnted after coming back 
 	
