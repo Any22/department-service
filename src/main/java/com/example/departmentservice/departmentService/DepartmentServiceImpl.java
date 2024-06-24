@@ -5,19 +5,22 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.departmentservice.departmentController.DepartmentController;
 import com.example.departmentservice.dto.DepartmentDTO;
 import com.example.departmentservice.entity.Department;
 import com.example.departmentservice.repository.DepartmentRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 @Service
+@Slf4j
 public class DepartmentServiceImpl implements DepartmentService{
-	private static final Logger LOGGER = LoggerFactory.getLogger(DepartmentServiceImpl.class);
+	
 	@Autowired 
 	private DepartmentRepository departmentRepository;
 	
@@ -25,9 +28,16 @@ public class DepartmentServiceImpl implements DepartmentService{
     private ModelMapper modelMapper;  
 
 	@Override
-	public Department saveDepartment(Department department) {
+	public void saveDepartment(DepartmentDTO departmentDTO) {
 		
-		return departmentRepository.save(department);
+		Department department = Department.builder()
+				.deptId(departmentDTO.getId())
+				.departmentName(departmentDTO.getDepartmentName())
+				.departmentAddress(departmentDTO.getDepartmentAddress())
+				.departmentCode(departmentDTO.getDepartmentCode())
+				.build();
+		
+		departmentRepository.save(department);
 
 	}
 
@@ -53,8 +63,9 @@ public class DepartmentServiceImpl implements DepartmentService{
        List<Department>  department = departmentRepository.findAll();
 		
 		if (department.isEmpty()) {
-			LOGGER.error("there is no data");
+			log.error("No data found");
 		}
+		
 		List<DepartmentDTO> departmentDTO = department.stream()
 				.map(eachUser -> modelMapper.map(eachUser,DepartmentDTO.class ))
 				.collect(Collectors.toList());
